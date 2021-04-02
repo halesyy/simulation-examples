@@ -128,5 +128,5 @@ def erode(x):
                 if within(y2, x2):
                     field[y2][x2][0] += 25 if field[y2][x2][0] <= 200 else 0
 
-erode(100000)
+erode(250000)
 Image.fromarray(field).show()
