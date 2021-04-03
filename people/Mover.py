@@ -103,9 +103,12 @@ class Sim:
 
 s = Sim(w=75, h=75)
 
-for i in range(50):
+for i in range(5000):
     s.person(random=True)
 s.refresh_taken_land()
+
+# 50    = 0.001s
+# 5,000 = 4.500s
 
 import time
 
@@ -115,6 +118,6 @@ while True:
         s.move_person(i, random=True) # move in random direction
         s.refresh_taken_land()
     s.view(save=True)
-    time.sleep(0.1)
+    # time.sleep(0.1)
     end = time.time()
     print(f"t2l: {end-srt}s")
