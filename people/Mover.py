@@ -26,7 +26,9 @@ class Sim:
         self.field = Image.new("RGBA", (self.w, self.h), color="black")
         self.field = np.array(self.field)
         self.pixels = [(y, x) for y in range(self.w) for x in range(self.h)]
+        self.pixels = set(self.pixels)
         self.people = []
+        self.tl = [] # taken land
 
     """
     returns a list of tuples of lands
@@ -36,9 +38,12 @@ class Sim:
         peoples_spots = [(person["y"], person["x"]) for person in self.people]
         return peoples_spots
 
+    def refresh_taken_land(self): # just a refresh state func
+        self.tl = set(self.taken_land())
+
     def find_safe_spot(self, y=False, x=False):
         while (y == False or x == False) or (y, x) in self.taken_land():
-            y, x = randint(0, self.w), randint(0, self.h)
+            y, x = randint(0, self.w-1), randint(0, self.h-1)
         return y, x
 
     def person(self, random=False, y=False, x=False):
@@ -80,7 +85,9 @@ class Sim:
             "br": (y+1, x+1),
             "bl": (y+1, x-1)
         }
-        movements = {k: v for k, v in movements.items() if self.safe(v)}
+        movements = {k: v for k, v in movements.items() if v in self.pixels and v not in self.tl}
+        if len(movements) == 0: # filtered fully down, sit still!
+            return y, x
         movement = movements[choice(list(movements.keys()))] if random == True else movements[direction]
         return movement
 
@@ -94,13 +101,20 @@ class Sim:
 
 
 
-s = Sim(w=100, h=100)
+s = Sim(w=75, h=75)
 
-for i in range(10):
+for i in range(50):
     s.person(random=True)
+s.refresh_taken_land()
+
+import time
 
 while True:
+    srt = time.time()
     for i in range(len(s.people)):
         s.move_person(i, random=True) # move in random direction
+        s.refresh_taken_land()
     s.view(save=True)
-    sleep(0.1)
+    time.sleep(0.1)
+    end = time.time()
+    print(f"t2l: {end-srt}s")
