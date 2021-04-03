@@ -10,7 +10,7 @@ from PIL import Image
 import numpy as np
 from random import choice
 
-w, h = 100, 100
+w, h = 250, 250
 field = Image.new("RGBA", (w, h), color="black")
 field = np.array(field)
 pixels = [(y, x) for x in range(h) for y in range(w)]
@@ -23,7 +23,7 @@ def find_first(yx):
     y, x = yx
     check, iters, done = [(y, x)], 0, []
     while len(check) != 0:
-        if iters >= 1000:
+        if iters >= 2000:
             break
         y, x = check[0]
         check.append(within(y+1, x)) # down
@@ -47,7 +47,8 @@ for i in range(20000000):
     # print(r, g, b, a)
     field[y][x][2] += 1
     pixels.append((y, x))
-    if i % 10000 == 0:
+    if i % 100000 == 0:
         Image.fromarray(field).save("progress.png")
+        print(f"{i/100000} units")
 
 Image.fromarray(field).show()
